@@ -1,0 +1,188 @@
+CREATE TABLE Restaurants
+	(
+		RESTAURANT_ID	NUMBER PRIMARY KEY NOT NULL,
+		RESTAURANT_NAME	VARCHAR(64) NOT NULL,
+		BUILDING		VARCHAR(30),
+		STREET			VARCHAR(25),
+		STREET1			VARCHAR(50) NOT NULL,
+		BORO			VARCHAR(40) NOT NULL,
+		ZIPCODE			VARCHAR(20),
+		PHONE			CHAR(12),
+		CUISINE_ID		NUMBER NOT NULL,
+		IS_OPEN			CHAR(1) NOT NULL,
+		FOREIGN KEY(CUISINE_ID) REFERENCES CUISINE(CUISINE_ID),
+		FOREIGN KEY(ZIPCODE) REFERENCES NY_ZIP_Codes(ZIP_CODE)
+		);
+
+CREATE TABLE NY_ZIP_Codes
+	(
+		--ZIPCODE_ID 		NUMBER PRIMARY KEY NOT NULL, Should Zip code be the primary key or have it's own id?
+		ZIP_CODE		VARCHAR(10) PRIMARY KEY NOT NULL,
+		CITY			VARCHAR(40) NOT NULL,
+		COUNTY			VARCHAR(50) NOT NULL,
+		ZIP_TYPE		VARCHAR(15) NOT NULL
+		);
+
+CREATE TABLE Violations
+	(
+		VIOLATION_CODE 		VARCHAR(5) PRIMARY KEY NOT NULL,
+		VIOLATION_DESC		VARCHAR(128)
+		);
+
+CREATE TABLE Inspections
+	(
+		INSPECTION_ID		NUMBER PRIMARY KEY NOT NULL,
+		--RECORD_ID			NUMBER PRIMARY KEY NOT NULL,--
+		RESTAURANT_ID		NUMBER NOT NULL,
+		INSPECTOR_ID		NUMBER NOT NULL,
+		INSPECTION_DATE		DATE NOT NULL,
+		ACTION				VARCHAR(100) NOT NULL,
+		VIOLATION_CODE		VARCHAR(5),
+		CRITICAL_FLAG		CHAR(1),
+		SCORE				NUMBER,
+		GRADE				CHAR(1),
+		GRADE_DATE			DATE,
+		--INSPECTION_TYPE		VARCHAR(100) NOT NULL,--
+		--PRIMARY KEY(INSPECTION_ID. RECORD_ID),
+		FOREIGN KEY(RESTAURANT_ID) REFERENCES Restaurants(RESTAURANT_ID),
+		FOREIGN KEY(VIOLATION_CODE)REFERENCES Violations(VIOLATION_CODE),
+		FOREIGN KEY(INSPECTOR_ID) REFERENCES Inspectors(INSPECTOR_ID)
+		);
+
+CREATE TABLE Inspections_Record
+	(
+		INSPECTION_ID		NUMBER PRIMARY KEY NOT NULL,
+		RESTAURANT_ID		NUMBER NOT NULL,
+		INSPECTION_TYPE		VARCHAR(100) NOT NULL,
+		FOREIGN KEY(INSPECTION_ID) REFERENCES Inspections(INSPECTION_ID),
+		FOREIGN KEY(RESTAURANT_ID) REFERENCES Restaurants(RESTAURANT_ID)
+		);
+
+CREATE TABLE Inspectors
+	(
+		INSPECTOR_ID		NUMBER PRIMARY KEY NOT NULL,
+		INSPECTOR_FIRST 	VARCHAR(25) NOT NULL,
+		INSPECTOR_LAST		VARCHAR(25) NOT NULL,
+		INSPECTOR_ADDRESS	VARCHAR(50) NOT NULL,
+		INSPECTORS_TITLE	VARCHAR(35) NOT NULL,
+		INSPECTOR_SALERY	NUMBER NOT NULL,
+		INSPECTOR_START		DATE NOT NULL,
+		INSPECTOR_END		DATE
+		);
+
+CREATE TABLE Inspector_History
+	(
+		INSPECTOR_ID		NUMBER PRIMARY KEY NOT NULL,
+		CURRENT_JOB			VARCHAR(50) NOT NULL,
+		PREVIOUS_JOB_TITLE	VARCHAR(50),
+		SALERY				NUMBER,
+		FOREIGN KEY(INSPECTOR_ID) REFERENCES Inspectors(INSPECTOR_ID)
+		);
+
+CREATE TABLE Outdoor_Seating_Permit
+	(
+		PERMIT_ID			NUMBER NOT NULL,
+		PERMIT_TYPE			VARCHAR(25) NOT NULL,
+		RESTAURANT_NAME		VARCHAR(64),
+		RESTAURANT_ID		NUMBER NOT NULL,
+		APPROVED_SIDEWALK	VARCHAR(3) NOT NULL,
+		APPROVED_ROAD		VARCHAR(3) NOT NULL,
+		SUBMISSION_DATE1	DATE NOT NULL,
+		PRIMARY KEY(PERMIT_ID, RESTAURANT_ID),
+		FOREIGN KEY(RESTAURANT_ID) REFERENCES Restaurants(RESTAURANT_ID)
+		);
+
+CREATE TABLE Cuisine
+	(
+		CUISINE_ID			NUMBER NOT NULL,
+		RESTAURANT_ID		NUMBER NOT NULL,
+		CUISINE_DESC		VARCHAR(100) NOT NULL,
+		PRIMARY KEY(CUISINE_ID, RESTAURANT_ID),
+		FOREIGN KEY(RESTAURANT_ID) REFERENCES Restaurants(RESTAURANT_ID)
+		);
+
+CREATE TABLE Customers
+	(
+		C_ID				NUMBER PRIMARY KEY NOT NULL,
+		C_FIRST				VARCHAR(25) NOT NULL,
+		C_LAST				VARCHAR(25) NOT NULL,
+		C_ADDRESS			VARCHAR(100) NOT NULL,
+		C_PHONE				CHAR(12) NOT NULL,
+		C_EMAIL				VARCAHR(55)
+		--C_COMMENT			VARCHAR(500), 
+		--C_COMMENT_DATE		DATE
+		);
+		
+CREATE TABLE Ratings
+	(
+		RATING_ID			NUMBER PRIMARY KEY NOT NULL,
+		C_ID				NUMBER NOT NULL,
+		RESTAURANT_ID		NUMBER NOT NULL,
+		RATING_COMMENT		VARCHAR(500),
+		RATING_NUMBER		NUMBER,
+		RATING_DATE			DATE,
+		FOREIGN KEY(C_ID) REFERENCES Customers(C_ID),
+		FOREIGN KEY(RESTAURANT_ID) REFERENCES Restaurants(RESTAURANT_ID)
+		);
+
+CREATE SEQUENCE sequence_1
+start with 1
+increment by 1
+minvalue 1
+maxvalue 100
+cycle;
+
+CREATE SEQUENCE sequence_2
+start with 10000000
+increment by 1
+cycle;
+
+insert into inspections_type(Inspection_id)
+values (SEQUENCE_1.nextval)
+
+insert into inspections_type(Inspection_id)
+values (SEQUENCE_1.nextval)
+
+insert into Inspectors
+values(100, 'Michael', 'Gerbert', '163 Halco Drive', 'Inspector', 69000, TO_DATE('2020/07/24', 'yyyy/mm/dd'), NULL);
+insert into Inspectors
+values(101, 'Richard', 'Dyson', '972 Buscimi street, NY', 'Senior Inspector', 89000, TO_DATE('2002/02/17', 'yyyy/mm/dd'), NULL);
+insert into Inspectors
+values(102, 'Kamrul', 'Alan', '142 Forward Ave NY', 'Senior Inspector', 22000, TO_DATE('2020/11/17', 'yyyy/mm/dd'), TO_DATE('2020/11/18', 'yyyy/mm/dd'));
+insert into Inspectors
+values(103, 'Doug', 'Bowser', '555 Star Road', 'Head Inspector', 100115, TO_DATE('1983/08/25', 'yyyy/mm/dd'), NULL);
+insert into Inspectors
+values(104, 'Mario', 'Mario', '551 Mushroom Street', 'Plumbing Inspector', 64128, TO_DATE('1983/08/25', 'yyyy/mm/dd'), NULL);
+
+insert into Inspectors_History
+values(100, 'Inspector', 'Commercial Retailer', 36000);
+insert into inspector_history
+values(101, 'Senior Inspector', 'Antique Dealer', 69000);
+insert into inspector_history
+values(102, 'Terminated', NULL, NULL);
+insert into inspector_history
+values(103, 'Plumber', 'Carpenter', 42000);
+insert into inspector_history
+values(104, 'Head Inspector', 'Senior Inspector', 89000);
+
+insert into Customers
+values(1, 'Michelle', 'Gerbet', '98 Century Road', '2011454785', 'mGerbert1@aol.com');
+insert into Customers
+values(2, 'Ursa', 'Minor', '178 Deapdale Drive', '9174279452', 'fyuouursa@yahoo.com');
+insert into Customers
+values(3, 'Medina', 'Densentra', '141 Terminal Street', '201472731', 'mdestra@gmail.com');
+insert into Customers
+values(4, 'James', 'Batista', '265 Lee Place', '5519654772', 'Batista79@gmail.com');
+insert into Customers
+values(5, 'Dylan', 'Pusian', '14 Rosyln Ave', '9147574689', 'Colbeh@hotmail.com');
+
+insert into Ratings
+values(1, 1, 41669951, 'Hi my phone number is 2011454785, my SSN is 123456789, you reach my email at "mGerbert1@aol.com" and my birthday is tomorrow on 12/18', 5, TO_DATE('2020/05/28', 'yyyy/mm/dd'));
+insert into Ratings
+values(2, 3, 50090588, 'Comment', 4), TO_DATE('2020/03/01', 'yyyy/mm/dd');
+insert into Ratings
+values(3, 2, 41391832, 'Comment', 1, TO_DATE('2020/03/01', 'yyyy/mm/dd'));
+insert into Ratings
+values(4, 5, 41262493, 'Comment', 3, TO_DATE('2020/01/10', 'yyyy/mm/dd'));
+insert into Ratings
+values(5, 4, 41548070, 'Comment', 5, TO_DATE('2020/02/11', 'yyyy/mm/dd') );
